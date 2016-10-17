@@ -48,8 +48,9 @@ void write_predictions(ParamCoLoRe *par) {
   sprintf(gbiasfn,"%s_gbias.dat",par->prefixOut);
   fg=fopen(gbiasfn,"w");
   fprintf (fg,"#z r(z) g(z) b1 b2 ... \n");
+
   // outter loop is over redshifts
-  for (double z=0; z<=par->z_max+par->pred_dz; z+=par->pred_dz) {
+  for (double z=0; z<=par->z_max; z+=par->pred_dz) {
     double r=r_of_z(par,z);
     double g=dgrowth_of_r(par,r);
     fprintf (fg,"%g %g %g ",z,r,g);
@@ -57,30 +58,11 @@ void write_predictions(ParamCoLoRe *par) {
     pk2xi(Nk,ka,pklin,ra,xilin);
     // inner loop is over populations, ipop=-1 is the unbiased version
     print_info ("Writing predictions of redshift %g:\n",z);
-    for (int ipop=0; ipop<par->n_gals; ipop++) {
-      double bias=bias_of_z_gals(par,z,ipop);
-      fprintf(fg,"%g ",bias);
-      print_info ("       Population %i, bias %g. \n",ipop,bias);
-      for (int i=0; i<Nk; i++) pk[i]=pklin[i]*bias*bias*exp(-par->r2_smooth*ka[i]*ka[i]);
-      pk2xi(Nk,ka,pk,ra,xi);
-      for (int i=0; i<Nk; i++) xi[i]=exp(xi[i])-1;
-      xi2pk(Nk,ra,xi,ka,pk);
-      // now open the files
-      sprintf(fnamepk,"%s_pk_pop%i_z%g.dat",par->prefixOut,ipop,z);
-      sprintf(fnamexi,"%s_xi_pop%i_z%g.dat",par->prefixOut,ipop,z);
-      fpk=fopen(fnamepk,"w");
-      fprintf (fpk, "# k[h/Mpc] P_tt P_tl P_ll\n");
-      fxi=fopen(fnamexi,"w");
-      fprintf (fpk, "# k[h/Mpc] xi_tt xi_ll*b^2 xi_ll\n");
-      for (int i=0; i<Nk; i++) {
-	if ((ka[i]>=kminout) && (ka[i]<=kmaxout))
-	  fprintf (fpk,"%g %g %g %g\n",ka[i],pk[i], pklin[i]*bias, pklin[i]);
-	if ((ra[i]>=rminout) && (ra[i]<=rmaxout))
-	  fprintf (fxi,"%g %g %g %g\n",ra[i],xi[i], xilin[i]*bias*bias, xilin[i]);
 
     if(par->do_sources) {
       for (int ipop=0; ipop<par->n_srcs; ipop++) {
 	double bias=bias_of_z_srcs(par,z,ipop);
+	fprintf(fg,"%g ",bias);
 	print_info ("       Population %i, bias %g. \n",ipop,bias);
 	for (int i=0; i<Nk; i++) pk[i]=pklin[i]*bias*bias*exp(-par->r2_smooth*ka[i]*ka[i]);
 	pk2xi(Nk,ka,pk,ra,xi);
