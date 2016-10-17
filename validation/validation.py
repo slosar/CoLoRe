@@ -69,8 +69,11 @@ def getReal(o, seed, rofz):
        .replace("%fft%",str(o.NfftC))
        )
     open('param.cfg','w').write(s)
-    fname="out__gals_0.h5"
-    os.remove(fname)
+    fname="out__srcs_0.h5"
+    try:
+        os.remove(fname)
+    except:
+        pass
     os.system("../CoLoRe param.cfg")
     #now read in the ra, dec convert to x,y,z
     print "Reading HDF"
