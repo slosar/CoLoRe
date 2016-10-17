@@ -27,6 +27,9 @@ parser.add_option("--rsmooth", dest="rsmooth", default=1.0, type="float",
                   help="smoothing")
 parser.add_option("--nfac", dest="nfac", default=1.0, type="float",
                   help="relative number of sources")
+parser.add_option("--plotslice", dest="plotslice", default=False, action="store_true",
+                  help="Plot one slice")
+
 
 (o, args) = parser.parse_args()
 
@@ -94,6 +97,10 @@ def getReal(o, seed, rofz):
     cy=cy[w]
     cz=cz[w]
     rr=rr[w]
+    if (o.plotslice):
+        w2=np.where(abs(cy)<10)
+        plt.plot(cx[w2],cz[w2],'b.')
+        plt.show()
     Ng=len(rr)
     dx=L/Nfft
     print "Indexing..."
