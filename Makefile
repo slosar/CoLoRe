@@ -3,7 +3,7 @@
 ###Compiler and compilation options
 COMP_SER = gcc
 COMP_MPI = mpicc
-OPTIONS = -Wall -O3
+OPTIONS = -Wall -O3 -std=c99
 #
 ### Behavioural flags
 #Use double precision integer (enable in general)
@@ -41,15 +41,15 @@ FITS_LIB =
 HDF5_INC =
 HDF5_LIB =
 #libconfig
-CONF_INC =
+CONF_INC = 
 CONF_LIB =
 #healpix
-HPIX_INC =
-HPIX_LIB =
+HPIX_INC = -I/home/anze/src/Healpix_3.20/include
+HPIX_LIB = -L/home/anze/src/Healpix_3.20/lib/
 #
 ########## End of user-definable ##########
 
-DEFINEFLAGS += -DHAVE_INLINE -DGSL_RANGE_CHECK_OFF
+DEFINEFLAGS += -DHAVE_INLINE -DGSL_RANGE_CHECK_OFF 
 
 ifeq ($(strip $(USE_OMP)),yes)
 OPTIONS += -fopenmp
@@ -80,17 +80,19 @@ ifeq ($(strip $(USE_OMP)),yes)
 LIB_FFTW += -lfftw3_omp
 endif #OMP
 ifeq ($(strip $(USE_MPI)),yes)
-LIB_FFTW += -lfftw3_mpi
+LIB_FFTW += -lfftw3_mpi 
 endif #MPI
-LIB_FFTW += -lfftw3
 
 endif #SINGLE_PRECISION
+LIB_FFTW += -lfftw3
 
+# for fftlog
+LIB_FFTW += -lfftw3
 
 OPTIONS += $(DEFINEFLAGS)
 
-INC_ALL = -I./src $(GSL_INC) $(FFTW_INC) $(FITS_INC) $(HDF5_INC) $(CONF_INC)
-LIB_ALL = $(GSL_LIB) $(FFTW_LIB) $(FITS_LIB) $(HDF5_LIB) $(CONF_LIB) -lconfig -lgsl -lgslcblas $(LIB_FFTW) -lcfitsio -lchealpix
+INC_ALL = -I./src $(GSL_INC) $(FFTW_INC) $(FITS_INC) $(HPIX_INC) $(HDF5_INC) $(CONF_INC)
+LIB_ALL = $(GSL_LIB) $(FFTW_LIB) $(FITS_LIB) $(HPIX_LIB) $(HDF5_LIB) $(CONF_LIB) -lconfig -lgsl -lgslcblas $(LIB_FFTW) -lcfitsio -lchealpix
 ifeq ($(strip $(USE_HDF5)),yes)
 DEFINEFLAGS += -D_HAVE_HDF5
 LIB_ALL += -lhdf5 -lhdf5_hl -lz
@@ -109,8 +111,10 @@ LCO = src/lightcone.o
 IOO = src/io.o
 HPIXO = src/healpix_extra.o
 PIXO = src/pixelization.o
+PREDICTO = src/predictions.o
+FFTLOGO = src/fftlog.o
 MAIN = src/main.c
-OFILES = $(COMMONO) $(COSMOMADO) $(COSMOO) $(FOURIERO) $(LCO) $(IOO) $(HPIXO) $(PIXO)
+OFILES = $(COMMONO) $(COSMOMADO) $(COSMOO) $(FOURIERO) $(LCO) $(IOO) $(HPIXO) $(PIXO) $(PREDICTO) $(FFTLOGO)
 
 EXEC = CoLoRe
 
