@@ -83,8 +83,9 @@ def getReal(o, seed, rofz):
     cx=ra*np.cos(dec)*np.sin(ra)
     cy=ra*np.cos(dec)*np.cos(ra)
     cz=ra*np.sin(dec)
-
     rr=np.sqrt(cx*cx+cy*cy+cz*cz)
+    ## this is the square that fits inside
+    ## the sphere -rmax..+rmax
     rmax=rr.max()/4*np.sqrt(3)
     L=2*rmax
     print "rmax=",rmax, rr.min(), rr.max()
